@@ -6,26 +6,38 @@ type State = {
   counter: number,
 };
 
-function withCounter<T>(Component: React.ComponentType<T>) {
-  return class Enhancer extends React.Component<T, State> {
+type Props = {
+  onColorChange: any,
+};
+
+function withCounter<T>(Component: React.ComponentType<$Diff<any, any>>) {
+  return class Enhancer extends React.Component<Props, State> {
     constructor() {
       super(...arguments);
       this.state = {
         counter: 0,
-        onIncrement: this._onIncrement,
-        onDecrement: this._onDecrement,
       };
     }
 
     render() {
-      return <Component counter={this.state} {...this.props} />;
+      console.log('ad', this.props);
+      return (
+        <Component
+          counter={this.state.counter}
+          onIncrement={this._onIncrement}
+          onDecrement={this._onDecrement}
+          {...this.props}
+        />
+      );
     }
 
     _onIncrement = () => {
+      this.props.onColorChange();
       this.setState({counter: this.state.counter + 1});
     };
 
     _onDecrement = () => {
+      this.props.onColorChange();
       this.setState({counter: this.state.counter - 1});
     };
   };
