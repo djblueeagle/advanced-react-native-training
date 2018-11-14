@@ -2,62 +2,42 @@
 
 import React, {Component} from 'react';
 import {View, StyleSheet, TouchableOpacity} from 'react-native';
-
+import {coduct} from '../../reduct/react-reduct';
 import {Text} from '../../core-ui';
 
-type Props = {};
+type Props = {
+  onIncrement: Function,
+  onDecrement: Function,
+  counter: number,
+};
+
 type State = {
   counter: number,
 };
 
-let reducer = (action) => (state) => {
-  switch (action.type) {
-    case 'Increment': {
-      return {
-        ...state,
-        counter: state.counter + 1,
-      };
-    }
-    case 'Decrement': {
-      return {
-        ...state,
-        counter: state.counter - 1,
-      };
-    }
-    default: {
-      return state;
-    }
-  }
-};
-export default class Counter extends Component<Props, State> {
-  state = {
-    counter: 0,
-  };
-
+class Counter extends Component<Props, State> {
   render() {
+    const {onIncrement, onDecrement, counter} = this.props;
     return (
       <View style={styles.root}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            this.dispatch({type: 'Increment'});
-          }}
-        />
-        <Text style={styles.counterText}>{this.state.counter}</Text>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => {
-            this.dispatch({type: 'Decrement'});
-          }}
-        />
+        <TouchableOpacity style={styles.button} onPress={onIncrement} />
+        <Text style={styles.counterText}>{counter}</Text>
+        <TouchableOpacity style={styles.button} onPress={onDecrement} />
       </View>
     );
   }
-
-  dispatch = (action: any) => {
-    this.setState(reducer(action));
-  };
 }
+
+const mapStateToProps = (state) => ({
+  counter: state.counter,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+  onIncrement: () => dispatch({type: 'INCREMENT'}),
+  onDecrement: () => dispatch({type: 'DECREMENT'}),
+});
+
+export default coduct(mapStateToProps, mapDispatchToProps)(Counter);
 
 let styles = StyleSheet.create({
   root: {
